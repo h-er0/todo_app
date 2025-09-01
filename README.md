@@ -11,6 +11,8 @@ It allows users to manage daily tasks with persistence powered by **Drift** and 
 
 Beyond simple CRUD operations, the app also supports **task scheduling with notifications**. Users are reminded of their tasks at the scheduled time, and they can fully customize the behavior of notifications and dialogs in the Settings.
 
+A **demo video** is included in the project root: `demo.mp4`.
+
 ---
 
 ## ✨ Features
@@ -26,6 +28,32 @@ Beyond simple CRUD operations, the app also supports **task scheduling with noti
   - Drift uses a String ID for tasks
   - Local notifications require a 32-bit signed integer
   - A custom FastHash function converts task IDs into valid integers safely
+
+---
+
+## 📝 How to Use
+
+**Add a Task:**
+
+1. Press the `Add` button in the navigation bar
+2. Fill in the task details (title, description, priority, date/time)
+3. Press `Create Task`
+
+**Edit a Task:**
+
+1. Press the task in the task list
+2. Edit the desired fields
+3. Press `Update task`
+
+**Delete a Task:**
+
+1. Swipe right on a task in the task list
+2. Press the `Delete` button
+
+**Complete a Task:**
+
+1. Fill the checkbox of the task in the task list
+2. Press `Complete all` button
 
 ---
 
@@ -48,11 +76,7 @@ The project follows **Clean Architecture principles** with two main layers:
 - **Presentation layer** → UI (views), Notifiers (application logic), States (Freezed)
 - **Data layer** → Repositories (interfaces + implementations), Data sources, Models
 
-> A domain layer (with use cases and entities) is **not included** because:
->
-> - The business logic is simple (CRUD + notifications + settings).
-> - Adding a full domain layer would introduce unnecessary boilerplate.
-> - Repositories and states are sufficient to separate concerns.
+> A domain layer is **not included** in this project. Entities are normally used as the building blocks of business logic, but since this app has simple CRUD operations and notification management, no separate business logic is implemented in entities. Instead, the app **directly uses the Task model** for all operations and persistence. This reduces boilerplate while keeping a clear separation of concerns.
 
 ---
 
@@ -97,7 +121,7 @@ features/
 1. **Clone the project**
 
 ```bash
-git clone https://github.com/h-er0/flutt_todo_app.git
+git clone https://github.com/username/flutter_todo_app.git
 cd flutter_todo_app
 ```
 
