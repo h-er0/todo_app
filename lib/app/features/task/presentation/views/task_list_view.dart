@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:todo_app/app/config/routes/app_router.dart';
+import 'package:todo_app/app/core/extensions/task_priority_x.dart';
 import 'package:todo_app/app/core/utils/format_date.dart';
 import 'package:todo_app/app/features/task/presentation/notifiers/task_list_notifier.dart';
 import 'package:todo_app/app/features/task/presentation/views/widgets/warning_dialog.dart';
@@ -145,7 +146,11 @@ class TaskListView extends HookConsumerWidget {
                             ),
                     ),
                     filteredTasks.isNotEmpty
-                        ? ListView.builder(
+                        ? ListView.separated(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 24,
+                              horizontal: 8,
+                            ),
                             shrinkWrap: true,
                             itemCount: tasks.length,
                             itemBuilder: (context, index) {
@@ -185,8 +190,7 @@ class TaskListView extends HookConsumerWidget {
                                     ),
                                   ],
                                 ),
-                                child: ListTile(
-                                  key: UniqueKey(),
+                                child: GestureDetector(
                                   onTap: () {
                                     if (!tasks[index].isComplete) {
                                       context.push(
@@ -196,85 +200,129 @@ class TaskListView extends HookConsumerWidget {
                                       shiftContent();
                                     }
                                   },
-                                  tileColor: isSelected
-                                      ? Colors.blue.withValues(alpha: .3)
-                                      : null,
-                                  leading: CustomCheckbox(
-                                    isSelected: isSelected
-                                        ? true
-                                        : tasks[index].isComplete,
-                                    onChanged: (value) async {
-                                      if (!tasks[index].isComplete) {
-                                        if (isSelected) {
-                                          selectedList.value = [
-                                            ...selectedList.value.where(
-                                              (id) => id != tasks[index].id,
-                                            ),
-                                          ];
-                                        } else {
-                                          selectedList.value = [
-                                            ...selectedList.value,
-                                            tasks[index].id,
-                                          ];
-                                        }
-                                      }
-                                    },
-                                  ),
-                                  title: Text(
-                                    tasks[index].scheduledDate != null
-                                        ? formatDate(
-                                            tasks[index].scheduledDate!
-                                                .toLocal(),
-                                          )
-                                        : "All Day",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: -.41,
-                                      inherit: true,
-                                      color: Colors.grey.shade600,
-                                      decoration: disable
-                                          ? TextDecoration.lineThrough
-                                          : null,
-                                      decorationColor: Colors.grey,
+                                  child: Container(
+                                    key: UniqueKey(),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 12,
                                     ),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        tasks[index].title,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: disable
-                                              ? Colors.grey.shade600
-                                              : Colors.black,
-                                          decoration: disable
-                                              ? TextDecoration.lineThrough
-                                              : null,
-                                          decorationColor: Colors.grey,
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Colors.blue.withValues(alpha: .3)
+                                          : null,
+                                      border: !isSelected
+                                          ? Border.all(
+                                              color:
+                                                  tasks[index].priority.color,
+                                            )
+                                          : null,
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        // Checkbox
+                                        CustomCheckbox(
+                                          isSelected: isSelected
+                                              ? true
+                                              : tasks[index].isComplete,
+                                          onChanged: (value) async {
+                                            if (!tasks[index].isComplete) {
+                                              if (isSelected) {
+                                                selectedList.value = [
+                                                  ...selectedList.value.where(
+                                                    (id) =>
+                                                        id != tasks[index].id,
+                                                  ),
+                                                ];
+                                              } else {
+                                                selectedList.value = [
+                                                  ...selectedList.value,
+                                                  tasks[index].id,
+                                                ];
+                                              }
+                                            }
+                                          },
                                         ),
-                                      ),
-                                      Text(
-                                        tasks[index].description,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          decoration: disable
-                                              ? TextDecoration.lineThrough
-                                              : null,
-                                          decorationColor: Colors.grey,
-                                          color: disable
-                                              ? Colors.grey.shade600
-                                              : Colors.black,
+
+                                        const SizedBox(width: 12),
+
+                                        // Main text content
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              // Date / All Day
+                                              Text(
+                                                tasks[index].scheduledDate !=
+                                                        null
+                                                    ? formatDate(
+                                                        tasks[index]
+                                                            .scheduledDate!
+                                                            .toLocal(),
+                                                      )
+                                                    : "All Day",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  letterSpacing: -.41,
+                                                  inherit: true,
+                                                  color: Colors.grey.shade600,
+                                                  decoration: disable
+                                                      ? TextDecoration
+                                                            .lineThrough
+                                                      : null,
+                                                  decorationColor: Colors.grey,
+                                                ),
+                                              ),
+
+                                              // Title
+                                              Text(
+                                                tasks[index].title,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: disable
+                                                      ? Colors.grey.shade600
+                                                      : Colors.black,
+                                                  decoration: disable
+                                                      ? TextDecoration
+                                                            .lineThrough
+                                                      : null,
+                                                  decorationColor: Colors.grey,
+                                                ),
+                                              ),
+
+                                              // Description
+                                              Text(
+                                                tasks[index].description,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  decoration: disable
+                                                      ? TextDecoration
+                                                            .lineThrough
+                                                      : null,
+                                                  decorationColor: Colors.grey,
+                                                  color: disable
+                                                      ? Colors.grey.shade600
+                                                      : Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
                             },
+                            separatorBuilder: (context, index) => Gap(6),
                           )
                         : Expanded(child: Center(child: Text("Empty"))),
                   ],
