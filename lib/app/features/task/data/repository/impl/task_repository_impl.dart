@@ -8,7 +8,7 @@ final taskRepositoryProvider = Provider<TaskRepositoryImpl>(
   (ref) => TaskRepositoryImpl(localDataSource: TaskLocalDataSource()),
 );
 
-class TaskRepositoryImpl extends TaskRepository {
+class TaskRepositoryImpl implements TaskRepository {
   final TaskLocalDataSource localDataSource;
 
   TaskRepositoryImpl({required this.localDataSource});

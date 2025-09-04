@@ -7,7 +7,7 @@ final settingRepositoryProvider = Provider<SettingRepositoryImpl>(
   (ref) => SettingRepositoryImpl(localDataSource: SettingLocalDataSource()),
 );
 
-class SettingRepositoryImpl extends SettingRepository {
+class SettingRepositoryImpl implements SettingRepository {
   final SettingLocalDataSource localDataSource;
 
   SettingRepositoryImpl({required this.localDataSource});
